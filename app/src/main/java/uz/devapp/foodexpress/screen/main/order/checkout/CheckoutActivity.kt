@@ -41,6 +41,7 @@ class CheckoutActivity : AppCompatActivity() {
 
         viewModel.errorLiveData.observe(    this) {
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            binding.flProgress.visibility = View.GONE
         }
 
         viewModel.successOrderLiveData.observe(this) {

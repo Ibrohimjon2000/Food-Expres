@@ -44,6 +44,7 @@ class RestaurantDetailActivity : AppCompatActivity(), ItemClickListener {
             }
             viewModel.errorLiveData.observe(this@RestaurantDetailActivity) {
                 Toast.makeText(this@RestaurantDetailActivity, it, Toast.LENGTH_SHORT).show()
+                binding.flProgress.visibility = View.GONE
             }
 
             viewModel.successProductLiveData.observe(this@RestaurantDetailActivity) {

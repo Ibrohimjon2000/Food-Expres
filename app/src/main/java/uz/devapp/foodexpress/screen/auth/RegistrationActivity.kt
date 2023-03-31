@@ -40,6 +40,7 @@ class RegistrationActivity : AppCompatActivity() {
 
             viewModel.errorLiveData.observe(this@RegistrationActivity) {
                 Toast.makeText(this@RegistrationActivity, it, Toast.LENGTH_SHORT).show()
+                binding.flProgress.visibility = View.GONE
             }
 
             viewModel.registrationLiveData.observe(this@RegistrationActivity) {

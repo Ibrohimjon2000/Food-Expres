@@ -40,6 +40,7 @@ class SiginActivity : AppCompatActivity() {
 
             viewModel.errorLiveData.observe(this@SiginActivity) {
                 Toast.makeText(this@SiginActivity, it, Toast.LENGTH_SHORT).show()
+                binding.flProgress.visibility = View.GONE
             }
 
             viewModel.siginLiveData.observe(this@SiginActivity) {

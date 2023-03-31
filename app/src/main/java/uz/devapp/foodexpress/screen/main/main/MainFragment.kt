@@ -31,6 +31,7 @@ class MainFragment : Fragment() {
 
             viewModel.errorLiveData.observe(requireActivity()) {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                binding.flProgress.visibility = View.GONE
             }
 
             viewModel.offerListLiveData.observe(requireActivity()) {

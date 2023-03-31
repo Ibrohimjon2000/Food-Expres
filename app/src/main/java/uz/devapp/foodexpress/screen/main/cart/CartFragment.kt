@@ -30,6 +30,7 @@ class CartFragment : Fragment(), CartProductAdapterCallback {
 
             viewModel.errorLiveData.observe(requireActivity()) {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                binding.flProgress.visibility = View.GONE
             }
 
             viewModel.foodListLiveData.observe(requireActivity()) {

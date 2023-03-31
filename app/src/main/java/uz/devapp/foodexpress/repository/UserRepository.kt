@@ -122,4 +122,13 @@ class UserRepository : BaseRepository() {
             return@withContext DataResult.Error<LoginResponse>(e.localizedMessage)
         }
     }
+
+    suspend fun getProfile() = withContext(Dispatchers.IO) {
+        try {
+            val response = api.getProfile()
+            return@withContext wrapResponse(response)
+        } catch (e: Exception) {
+            return@withContext DataResult.Error<ProfileModel>(e.localizedMessage)
+        }
+    }
 }

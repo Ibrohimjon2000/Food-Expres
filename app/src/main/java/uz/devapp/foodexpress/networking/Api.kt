@@ -69,4 +69,8 @@ interface Api {
     suspend fun getMakeRating(
         @Body request: MakeRatingRequest
     ): Response<BaseResponse<Any?>>
+
+    @GET("api/user")
+    suspend fun getProfile(
+    ): Response<BaseResponse<ProfileModel?>>
 }
