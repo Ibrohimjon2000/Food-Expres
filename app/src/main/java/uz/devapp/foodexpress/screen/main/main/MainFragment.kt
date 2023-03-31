@@ -58,11 +58,12 @@ class MainFragment : Fragment() {
                 binding.flProgress.visibility = View.GONE
             }
 
-           loadData()
+            loadData()
         }
         return binding.root
     }
-    fun loadData(){
+
+    fun loadData() {
         binding.flProgress.visibility = View.VISIBLE
         viewModel.getOffers()
         viewModel.getCategory()

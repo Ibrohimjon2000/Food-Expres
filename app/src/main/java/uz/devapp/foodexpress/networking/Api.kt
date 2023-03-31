@@ -1,12 +1,8 @@
 package uz.devapp.foodexpress.networking
 
-import io.reactivex.rxjava3.core.Observable
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 import uz.devapp.foodexpress.models.*
@@ -14,18 +10,17 @@ import uz.devapp.foodexpress.models.request.*
 import uz.devapp.foodexpress.models.response.BaseResponse
 import uz.devapp.foodexpress.models.response.LoginResponse
 import uz.devapp.foodexpress.models.response.RegistrationResponse
-import uz.devapp.foodexpress.utils.Constants.DEVELOPER_KEY
 
 interface Api {
     @POST("api/login")
-    fun login(
+    suspend fun login(
         @Body request: LoginRequest
-    ): Observable<BaseResponse<LoginResponse?>>
+    ): Response<BaseResponse<LoginResponse?>>
 
     @POST("api/registration")
-    fun registration(
+    suspend fun registration(
         @Body request: RegistrationRequest
-    ): Observable<BaseResponse<RegistrationResponse?>>
+    ): Response<BaseResponse<RegistrationResponse?>>
 
     @GET("api/offers")
     suspend fun getOffers(
@@ -71,7 +66,7 @@ interface Api {
     ): Response<BaseResponse<Any>>
 
     @POST("api/make_rating")
-   suspend fun getMakeRating(
+    suspend fun getMakeRating(
         @Body request: MakeRatingRequest
     ): Response<BaseResponse<Any?>>
 }

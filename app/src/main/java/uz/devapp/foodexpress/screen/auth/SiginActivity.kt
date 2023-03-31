@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -14,6 +15,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import uz.devapp.foodexpress.adapters.SlideAdapter
 import uz.devapp.foodexpress.databinding.ActivitySiginBinding
 import uz.devapp.foodexpress.models.request.LoginRequest
 import uz.devapp.foodexpress.models.response.BaseResponse
@@ -21,58 +23,38 @@ import uz.devapp.foodexpress.models.response.LoginResponse
 import uz.devapp.foodexpress.networking.Api
 import uz.devapp.foodexpress.networking.NetworkingObject
 import uz.devapp.foodexpress.screen.main.MainActivity
+import uz.devapp.foodexpress.screen.main.main.MainViewModel
 import uz.devapp.foodexpress.utils.Constants
 import uz.devapp.foodexpress.utils.Constants.BASE_URL
 import uz.devapp.foodexpress.utils.PrefUtils
 
 class SiginActivity : AppCompatActivity() {
     lateinit var binding: ActivitySiginBinding
-    var compositeDisposable = CompositeDisposable()
+    lateinit var viewModel: SiginViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySiginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.apply {
+            viewModel = ViewModelProvider(this@SiginActivity)[SiginViewModel::class.java]
+
+            viewModel.errorLiveData.observe(this@SiginActivity) {
+                Toast.makeText(this@SiginActivity, it, Toast.LENGTH_SHORT).show()
+            }
+
+            viewModel.siginLiveData.observe(this@SiginActivity) {
+                PrefUtils.setToken(it!!.token)
+                startActivity(
+                    Intent(
+                        this@SiginActivity,
+                        MainActivity::class.java
+                    )
+                )
+                finish()
+            }
 
             btnLogin.setOnClickListener {
-                compositeDisposable.clear()
-                compositeDisposable.add(
-                    NetworkingObject.getClientInstance().login(LoginRequest(edPassword.text.toString(), edPhone.text.toString()))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnSubscribe {
-                            flProgress.visibility = View.VISIBLE
-                        }
-                        .doOnComplete {
-                            flProgress.visibility = View.GONE
-                        }
-                        .subscribeWith(object : DisposableObserver<BaseResponse<LoginResponse?>>() {
-                            override fun onNext(t: BaseResponse<LoginResponse?>) {
-                                if (t.success) {
-                                    PrefUtils.setToken(t.data!!.token)
-                                    startActivity(
-                                        Intent(
-                                            this@SiginActivity,
-                                            MainActivity::class.java
-                                        )
-                                    )
-                                    finish()
-                                }
-                            }
-
-                            override fun onError(e: Throwable) {
-                                Toast.makeText(
-                                    this@SiginActivity,
-                                    e.localizedMessage,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-
-                            override fun onComplete() {
-
-                            }
-                        })
-                )
+                loadData()
             }
 
             tvRegistration.setOnClickListener {
@@ -80,5 +62,15 @@ class SiginActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    fun loadData() {
+        binding.flProgress.visibility = View.VISIBLE
+        viewModel.getSigin(
+            LoginRequest(
+                binding.edPassword.text.toString(),
+                binding.edPhone.text.toString()
+            )
+        )
     }
 }

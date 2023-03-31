@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -14,6 +15,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import uz.devapp.foodexpress.adapters.SlideAdapter
 import uz.devapp.foodexpress.databinding.ActivityRegistrationBinding
 import uz.devapp.foodexpress.models.request.RegistrationRequest
 import uz.devapp.foodexpress.models.response.BaseResponse
@@ -21,66 +23,39 @@ import uz.devapp.foodexpress.models.response.RegistrationResponse
 import uz.devapp.foodexpress.networking.Api
 import uz.devapp.foodexpress.networking.NetworkingObject
 import uz.devapp.foodexpress.screen.main.MainActivity
+import uz.devapp.foodexpress.screen.main.main.MainViewModel
 import uz.devapp.foodexpress.utils.Constants
 import uz.devapp.foodexpress.utils.PrefUtils
 
 class RegistrationActivity : AppCompatActivity() {
     lateinit var binding: ActivityRegistrationBinding
-    var compositeDisposable = CompositeDisposable()
+    lateinit var viewModel: RegistrationViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegistrationBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.apply {
+            viewModel =
+                ViewModelProvider(this@RegistrationActivity)[RegistrationViewModel::class.java]
 
+            viewModel.errorLiveData.observe(this@RegistrationActivity) {
+                Toast.makeText(this@RegistrationActivity, it, Toast.LENGTH_SHORT).show()
+            }
+
+            viewModel.registrationLiveData.observe(this@RegistrationActivity) {
+                PrefUtils.setToken(it!!.token)
+                startActivity(
+                    Intent(
+                        this@RegistrationActivity,
+                        MainActivity::class.java
+                    )
+                )
+                finish()
+            }
 
             btnRegistration.setOnClickListener {
                 if (edPassword.text.toString() == edRepassword.text.toString()) {
-                    compositeDisposable.clear()
-                    compositeDisposable.add(
-                        NetworkingObject.getClientInstance().registration(
-                            RegistrationRequest(
-                                edFullname.text.toString(),
-                                edPhone.text.toString(),
-                                edPassword.text.toString()
-                            )
-                        )
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnSubscribe {
-                                flProgress.visibility = View.VISIBLE
-                            }
-                            .doOnComplete {
-                                flProgress.visibility = View.GONE
-                            }
-                            .subscribeWith(object :
-                                DisposableObserver<BaseResponse<RegistrationResponse?>>() {
-                                override fun onNext(t: BaseResponse<RegistrationResponse?>) {
-                                    if (t.success) {
-                                        PrefUtils.setToken(t.data!!.token)
-                                        startActivity(
-                                            Intent(
-                                                this@RegistrationActivity,
-                                                MainActivity::class.java
-                                            )
-                                        )
-                                        finish()
-                                    }
-                                }
-
-                                override fun onError(e: Throwable) {
-                                    Toast.makeText(
-                                        this@RegistrationActivity,
-                                        e.localizedMessage,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-
-                                override fun onComplete() {
-
-                                }
-                            })
-                    )
+                    loadData()
                 } else {
                     Toast.makeText(
                         this@RegistrationActivity,
@@ -94,5 +69,16 @@ class RegistrationActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    fun loadData() {
+        binding.flProgress.visibility = View.VISIBLE
+        viewModel.getRegistration(
+            RegistrationRequest(
+                binding.edFullname.text.toString(),
+                binding.edPhone.text.toString(),
+                binding.edPassword.text.toString()
+            )
+        )
     }
 }

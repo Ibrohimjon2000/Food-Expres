@@ -4,21 +4,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uz.devapp.foodexpress.base.BaseRepository
 import uz.devapp.foodexpress.models.*
-import uz.devapp.foodexpress.models.request.FoodsByIdsRequest
-import uz.devapp.foodexpress.models.request.MakeOrderRequest
-import uz.devapp.foodexpress.models.request.MakeRatingRequest
-import uz.devapp.foodexpress.models.response.BaseResponse
+import uz.devapp.foodexpress.models.request.*
+import uz.devapp.foodexpress.models.response.LoginResponse
+import uz.devapp.foodexpress.models.response.RegistrationResponse
 import uz.devapp.foodexpress.models.sealed.DataResult
 import uz.devapp.foodexpress.networking.NetworkingObject
 import uz.devapp.foodexpress.utils.PrefUtils
 
-class UserRepository:BaseRepository() {
+class UserRepository : BaseRepository() {
     val api = NetworkingObject.getClientInstance()
 
     suspend fun getOffers() = withContext(Dispatchers.IO) {
         try {
             val response = api.getOffers()
-           return@withContext wrapResponse(response)
+            return@withContext wrapResponse(response)
         } catch (e: Exception) {
             return@withContext DataResult.Error<List<OfferModel>>(e.localizedMessage)
         }
@@ -27,7 +26,7 @@ class UserRepository:BaseRepository() {
     suspend fun getCategory() = withContext(Dispatchers.IO) {
         try {
             val response = api.getCategories()
-           return@withContext wrapResponse(response)
+            return@withContext wrapResponse(response)
         } catch (e: Exception) {
             return@withContext DataResult.Error<List<CategoryModel>>(e.localizedMessage)
         }
@@ -36,7 +35,7 @@ class UserRepository:BaseRepository() {
     suspend fun getRestaurants() = withContext(Dispatchers.IO) {
         try {
             val response = api.getRestaurants(RestaurantFilter())
-           return@withContext wrapResponse(response)
+            return@withContext wrapResponse(response)
         } catch (e: Exception) {
             return@withContext DataResult.Error<List<RestaurantModel>>(e.localizedMessage)
         }
@@ -45,7 +44,7 @@ class UserRepository:BaseRepository() {
     suspend fun getTopRestaurants() = withContext(Dispatchers.IO) {
         try {
             val response = api.getTopRestaurants(TopRestaurantFilter())
-           return@withContext wrapResponse(response)
+            return@withContext wrapResponse(response)
         } catch (e: Exception) {
             return@withContext DataResult.Error<List<RestaurantModel>>(e.localizedMessage)
         }
@@ -54,7 +53,7 @@ class UserRepository:BaseRepository() {
     suspend fun getMakeRating(request: MakeRatingRequest) = withContext(Dispatchers.IO) {
         try {
             val response = api.getMakeRating(request)
-           return@withContext wrapResponse(response)
+            return@withContext wrapResponse(response)
         } catch (e: Exception) {
             return@withContext e.localizedMessage
         }
@@ -63,7 +62,7 @@ class UserRepository:BaseRepository() {
     suspend fun getAllRestaurant(request: AllRestaurant) = withContext(Dispatchers.IO) {
         try {
             val response = api.getAllRestaurants(request)
-           return@withContext wrapResponse(response)
+            return@withContext wrapResponse(response)
         } catch (e: Exception) {
             return@withContext DataResult.Error<List<RestaurantModel>>(e.localizedMessage)
         }
@@ -89,7 +88,8 @@ class UserRepository:BaseRepository() {
 
     suspend fun getFoods() = withContext(Dispatchers.IO) {
         try {
-            val response = api.getFoodsByIds(FoodsByIdsRequest(PrefUtils.getCartList().map { it.id }))
+            val response =
+                api.getFoodsByIds(FoodsByIdsRequest(PrefUtils.getCartList().map { it.id }))
             return@withContext wrapResponse(response)
         } catch (e: Exception) {
             return@withContext DataResult.Error<List<ProductModel>>(e.localizedMessage)
@@ -102,6 +102,24 @@ class UserRepository:BaseRepository() {
             return@withContext wrapResponse(response)
         } catch (e: Exception) {
             return@withContext e.localizedMessage
+        }
+    }
+
+    suspend fun getRegistration(request: RegistrationRequest) = withContext(Dispatchers.IO) {
+        try {
+            val response = api.registration(request)
+            return@withContext wrapResponse(response)
+        } catch (e: Exception) {
+            return@withContext DataResult.Error<RegistrationResponse>(e.localizedMessage)
+        }
+    }
+
+    suspend fun getSigin(request: LoginRequest) = withContext(Dispatchers.IO) {
+        try {
+            val response = api.login(request)
+            return@withContext wrapResponse(response)
+        } catch (e: Exception) {
+            return@withContext DataResult.Error<LoginResponse>(e.localizedMessage)
         }
     }
 }
