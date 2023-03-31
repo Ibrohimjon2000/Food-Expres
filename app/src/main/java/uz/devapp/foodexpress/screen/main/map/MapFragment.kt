@@ -1,42 +1,110 @@
 package uz.devapp.foodexpress.screen.main.map
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
+import com.permissionx.guolindev.PermissionX
 import uz.devapp.foodexpress.R
+import uz.devapp.foodexpress.adapters.SlideAdapter
+import uz.devapp.foodexpress.databinding.FragmentMapBinding
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 class MapFragment : Fragment() {
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var mMap: GoogleMap
+    lateinit var binding: FragmentMapBinding
+    lateinit var viewModel: MapViewModel
+    var locations: ArrayList<LatLng> = ArrayList()
+    var locationName: ArrayList<String> = ArrayList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_map, container, false)
+    ): View {
+        binding = FragmentMapBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(this)[MapViewModel::class.java]
+
+        val supportMapFragment =
+            childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
+
+        viewModel.errorLiveData.observe(requireActivity()) {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            binding.flProgress.visibility = View.GONE
+        }
+
+        viewModel.restaurantListLiveData.observe(requireActivity()) {
+            it?.forEach {
+                locations.add(LatLng(it.latitude, it.longitude))
+            }
+            it?.forEach {
+                locationName.add(it.name)
+            }
+
+            supportMapFragment.getMapAsync(object : OnMapReadyCallback {
+                @SuppressLint("MissingPermission")
+                override fun onMapReady(google_map: GoogleMap) {
+                    mMap = google_map
+
+                    PermissionX.init(requireActivity())
+                        .permissions(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                        .request { allGranted, grantedList, deniedList ->
+                            if (allGranted) {
+                                var latLngBoundsBuilder = LatLngBounds.Builder()
+
+                                var position = 0
+                                locations.forEach {
+                                    mMap.addMarker(
+                                        MarkerOptions().position(it).title(locationName[position])
+                                    )
+                                    position++
+                                    latLngBoundsBuilder.include(it)
+                                }
+                                mMap.moveCamera(
+                                    CameraUpdateFactory.newLatLngBounds(
+                                        latLngBoundsBuilder.build(),
+                                        100
+                                    )
+                                )
+                            } else {
+                                Toast.makeText(
+                                    requireActivity(),
+                                    "These permissions are denied: $deniedList",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                }
+            })
+            binding.flProgress.visibility = View.GONE
+        }
+
+        loadData()
+
+        return binding.root
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MapFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        fun newInstance() = MapFragment()
+    }
+
+    fun loadData() {
+        binding.flProgress.visibility = View.VISIBLE
+        viewModel.getRestaurant()
     }
 }

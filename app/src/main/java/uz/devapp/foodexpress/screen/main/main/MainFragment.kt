@@ -1,12 +1,20 @@
 package uz.devapp.foodexpress.screen.main.main
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import uz.devapp.foodexpress.R
 import uz.devapp.foodexpress.adapters.CategoryAdapter
 import uz.devapp.foodexpress.adapters.RestaurantAdapter
 import uz.devapp.foodexpress.adapters.SlideAdapter
@@ -57,6 +65,10 @@ class MainFragment : Fragment() {
                 topRestaurantAdapter = TopRestaurantAdapter(it ?: emptyList())
                 rvTopRestaurants.adapter = topRestaurantAdapter
                 binding.flProgress.visibility = View.GONE
+            }
+
+            profile.setOnClickListener {
+//                Navigation.findNavController(root).navigate(R.id.profileFragment)
             }
 
             loadData()

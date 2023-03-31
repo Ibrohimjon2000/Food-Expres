@@ -88,7 +88,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                                         ), 14F
                                     )
                                 )
-                                binding.btnLocation.visibility = View.VISIBLE
                             }
                         })
                 } else {
