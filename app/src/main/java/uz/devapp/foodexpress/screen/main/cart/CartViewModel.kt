@@ -23,9 +23,6 @@ class CartViewModel : ViewModel() {
     private var _errorLiveData = MutableLiveData<String>()
     var errorLiveData: LiveData<String> = _errorLiveData
 
-    private var _progressLiveData = MutableLiveData<Boolean>()
-    var progressLiveData: LiveData<Boolean> = _progressLiveData
-
     private var _foodListLiveData = MutableLiveData<List<ProductModel>?>()
     var foodListLiveData: LiveData<List<ProductModel>?> = _foodListLiveData
 

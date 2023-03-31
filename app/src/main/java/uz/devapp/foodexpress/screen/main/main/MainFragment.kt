@@ -33,37 +33,41 @@ class MainFragment : Fragment() {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
 
-            viewModel.progressLiveData.observe(requireActivity()) {
-                flProgress.visibility = if (it) View.VISIBLE else View.GONE
-            }
-
             viewModel.offerListLiveData.observe(requireActivity()) {
                 slideAdapter = SlideAdapter(it ?: emptyList())
                 rvSlide.adapter = slideAdapter
+                binding.flProgress.visibility = View.GONE
             }
 
 
             viewModel.categoryListLiveData.observe(requireActivity()) {
                 categoryAdapter = CategoryAdapter(it ?: emptyList())
                 rvCategories.adapter = categoryAdapter
+                binding.flProgress.visibility = View.GONE
             }
 
             viewModel.restaurantListLiveData.observe(requireActivity()) {
                 restaurantAdapter = RestaurantAdapter(it ?: emptyList())
                 rvNearbyRestaurants.adapter = restaurantAdapter
+                binding.flProgress.visibility = View.GONE
             }
 
             viewModel.restaurantTopListLiveData.observe(requireActivity()) {
                 topRestaurantAdapter = TopRestaurantAdapter(it ?: emptyList())
                 rvTopRestaurants.adapter = topRestaurantAdapter
+                binding.flProgress.visibility = View.GONE
             }
 
-            viewModel.getOffers()
-            viewModel.getCategory()
-            viewModel.getRestaurant()
-            viewModel.getTopRestaurant()
+           loadData()
         }
         return binding.root
+    }
+    fun loadData(){
+        binding.flProgress.visibility = View.VISIBLE
+        viewModel.getOffers()
+        viewModel.getCategory()
+        viewModel.getRestaurant()
+        viewModel.getTopRestaurant()
     }
 
     companion object {

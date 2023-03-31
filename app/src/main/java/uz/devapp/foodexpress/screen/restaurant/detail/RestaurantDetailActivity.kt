@@ -46,19 +46,18 @@ class RestaurantDetailActivity : AppCompatActivity(), ItemClickListener {
                 Toast.makeText(this@RestaurantDetailActivity, it, Toast.LENGTH_SHORT).show()
             }
 
-            viewModel.progressLiveData.observe(this@RestaurantDetailActivity) {
-                binding.flProgress.visibility = if (it) View.VISIBLE else View.GONE
-            }
-
             viewModel.successProductLiveData.observe(this@RestaurantDetailActivity) {
+                binding.flProgress.visibility = View.VISIBLE
                 it?.forEach {
                     it.cartCount = PrefUtils.getCartCount(it.id)
                 }
                 productAdapter = ProductAdapter(it ?: emptyList())
                 rvProduct.adapter = productAdapter
+                binding.flProgress.visibility = View.GONE
             }
 
             viewModel.successDetailRestaurantLiveData.observe(this@RestaurantDetailActivity) {
+                binding.flProgress.visibility = View.VISIBLE
                 if (it != null) {
                     restaurantModel = it
 
@@ -69,10 +68,10 @@ class RestaurantDetailActivity : AppCompatActivity(), ItemClickListener {
                     reting.rating = restaurantModel.rating.toFloat()
                     tvContact.text = restaurantModel.phone
                 }
+                binding.flProgress.visibility = View.GONE
             }
 
-            viewModel.getProduct(restaurantModel.id)
-            viewModel.getDetailRestaurant(restaurantModel.id)
+           loadData()
 
             back.setOnClickListener {
                 finish()
@@ -89,6 +88,12 @@ class RestaurantDetailActivity : AppCompatActivity(), ItemClickListener {
                 startActivity(intent)
             }
         }
+    }
+
+    fun loadData(){
+        binding.flProgress.visibility = View.VISIBLE
+        viewModel.getProduct(restaurantModel.id)
+        viewModel.getDetailRestaurant(restaurantModel.id)
     }
 
     override fun onItemClick(restaurantModel: RestaurantModel) {

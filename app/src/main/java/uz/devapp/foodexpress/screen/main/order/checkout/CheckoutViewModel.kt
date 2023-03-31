@@ -22,9 +22,6 @@ class CheckoutViewModel : ViewModel() {
     private var _errorLiveData = MutableLiveData<String>()
     var errorLiveData: LiveData<String> = _errorLiveData
 
-    private var _progressLiveData = MutableLiveData<Boolean>()
-    var progressLiveData: LiveData<Boolean> = _progressLiveData
-
     private var _successOrderLiveData = MutableLiveData<Boolean>()
     var successOrderLiveData: LiveData<Boolean> = _successOrderLiveData
 

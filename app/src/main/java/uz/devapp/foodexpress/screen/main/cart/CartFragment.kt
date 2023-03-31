@@ -32,16 +32,13 @@ class CartFragment : Fragment(), CartProductAdapterCallback {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
 
-            viewModel.progressLiveData.observe(requireActivity()) {
-                flProgress.visibility = if (it) View.VISIBLE else View.GONE
-            }
-
             viewModel.foodListLiveData.observe(requireActivity()) {
                 cartProductAdapter = CartProductAdapter(it ?: emptyList(), this@CartFragment)
                 rvCart.adapter = cartProductAdapter
                 lottie.visibility = if (it!!.isNotEmpty()) View.GONE else View.VISIBLE
                 lyCartAction.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
                 tvTotalAmount.text = it.sumOf { it.cartCount * it.price }.toString() + " UZS"
+                binding.flProgress.visibility = View.GONE
             }
 
             checkout.setOnClickListener {
@@ -54,6 +51,7 @@ class CartFragment : Fragment(), CartProductAdapterCallback {
                 startActivity(intent)
             }
 
+            binding.flProgress.visibility = View.VISIBLE
             viewModel.getFoods()
 
         }
@@ -67,6 +65,7 @@ class CartFragment : Fragment(), CartProductAdapterCallback {
 
     override fun onUpdate(count: Int) {
         if (count == 0) {
+            binding.flProgress.visibility = View.VISIBLE
             binding.lottie.visibility =
                 if (viewModel.foodListLiveData.value!!.isNotEmpty()) View.GONE else View.VISIBLE
             viewModel.getFoods()
