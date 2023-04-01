@@ -21,8 +21,10 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/menu"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:onClick="openCloseNavigationDrawer"
                 android:src="@drawable/menu" />
 
             <ImageView

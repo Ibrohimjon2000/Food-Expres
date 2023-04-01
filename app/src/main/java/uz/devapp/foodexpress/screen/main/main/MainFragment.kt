@@ -2,10 +2,14 @@ package uz.devapp.foodexpress.screen.main.main
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +24,7 @@ import uz.devapp.foodexpress.adapters.RestaurantAdapter
 import uz.devapp.foodexpress.adapters.SlideAdapter
 import uz.devapp.foodexpress.adapters.TopRestaurantAdapter
 import uz.devapp.foodexpress.databinding.FragmentMainBinding
+import uz.devapp.foodexpress.screen.main.MainActivity
 
 class MainFragment : Fragment() {
     lateinit var binding: FragmentMainBinding
@@ -36,6 +41,10 @@ class MainFragment : Fragment() {
         binding = FragmentMainBinding.inflate(inflater, container, false)
         binding.apply {
             viewModel = ViewModelProvider(this@MainFragment)[MainViewModel::class.java]
+
+            menu.setOnClickListener{ v ->
+                (activity as MainActivity).openCloseNavigationDrawer(v)
+            }
 
             viewModel.errorLiveData.observe(requireActivity()) {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
