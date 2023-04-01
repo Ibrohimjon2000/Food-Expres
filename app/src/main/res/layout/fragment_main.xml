@@ -34,11 +34,9 @@
                 android:layout_weight="1"
                 android:src="@drawable/logo_horizontal" />
 
-            <ImageView
-                android:id="@+id/profile"
+            <View
                 android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/profile" />
+                android:layout_height="24dp" />
 
         </LinearLayout>
 

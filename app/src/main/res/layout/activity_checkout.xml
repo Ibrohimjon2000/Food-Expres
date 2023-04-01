@@ -35,12 +35,6 @@
                 android:textColor="@color/white"
                 android:textSize="20sp" />
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="16dp"
-                android:src="@drawable/profile" />
-
         </LinearLayout>
 
         <LinearLayout

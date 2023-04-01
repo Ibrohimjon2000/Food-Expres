@@ -90,27 +90,24 @@ class FeedbackFragment : BottomSheetDialogFragment(), View.OnClickListener {
     }
 
     override fun onClick(p0: View?) {
-        val id = arguments?.getString("id")
+        val id = arguments?.getString("id")?.toInt()
+
         request.comment = binding.tvComment.text.toString()
-        request.restaurantId = id?.toInt()!!
+        request.restaurantId = id!!
         request.rating = binding.tvRating.rating.toInt()
         viewModel.getMakeRating(request)
         Toast.makeText(requireActivity(), "Update Rating", Toast.LENGTH_SHORT).show()
 
+        viewModel.getAllRestaurant()
+
         viewModel.successRestaurantsLiveData .observe(requireActivity()) {
             it.forEach {
-                if (id.toInt() == it.id) {
+                if (id == it.id) {
                     mListener!!.onItemClick(it)
                     dismiss()
                 }
             }
         }
-
-        viewModel.errorLiveData.observe(requireActivity()) {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-        }
-
-        viewModel.getAllRestaurant()
     }
 
     override fun onDetach() {

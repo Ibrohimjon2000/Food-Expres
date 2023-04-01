@@ -76,10 +76,6 @@ class MainFragment : Fragment() {
                 binding.flProgress.visibility = View.GONE
             }
 
-            profile.setOnClickListener {
-//                Navigation.findNavController(root).navigate(R.id.profileFragment)
-            }
-
             loadData()
         }
         return binding.root

@@ -22,7 +22,7 @@
         <TextView
             android:padding="16dp"
             android:gravity="center"
-            android:text="Bu ilovada retingi baland va yaqin atrofdagi restoranlarni topishingiz va ovqat buyurtma qilishingiz mumkin."
+            android:text="Bu ilovada reytingi baland va yaqin atrofdagi restoranlarni topishingiz va ovqat buyurtma qilishingiz mumkin."
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
