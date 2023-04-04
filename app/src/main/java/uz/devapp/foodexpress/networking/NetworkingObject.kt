@@ -24,15 +24,7 @@ object NetworkingObject {
                         .addHeader("Key", Constants.DEVELOPER_KEY)
                         .build()
                     chain.proceed(request)
-                }
-                .addInterceptor(
-                    ChuckerInterceptor.Builder(MyApp.app)
-                        .collector(ChuckerCollector(MyApp.app))
-                        .maxContentLength(250000L)
-                        .redactHeaders(emptySet())
-                        .alwaysReadResponseBody(false)
-                        .build()
-                ).build()
+                }.build()
             )
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava3CallAdapterFactory.create())

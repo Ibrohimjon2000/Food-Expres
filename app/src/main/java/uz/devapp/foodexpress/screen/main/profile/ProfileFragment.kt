@@ -30,7 +30,11 @@ class ProfileFragment : Fragment() {
 
             viewModel.profileLiveData.observe(requireActivity()) {
                 tvFullName.text = it?.fullname
-                tvPhone.text = "+"+it?.phone
+                if (it?.phone?.substring(0, 1) == "+") {
+                    tvPhone.text = it?.phone
+                } else {
+                    tvPhone.text = "+" + it?.phone
+                }
                 binding.flProgress.visibility = View.GONE
             }
             loadData()
