@@ -40,7 +40,14 @@ class SiginActivity : AppCompatActivity() {
 
             viewModel.errorLiveData.observe(this@SiginActivity) {
                 Toast.makeText(this@SiginActivity, it, Toast.LENGTH_SHORT).show()
-                binding.flProgress.visibility = View.GONE
+            }
+
+            viewModel.progressLiveData.observe(this@SiginActivity){
+                if (it){
+                    binding.flProgress.visibility = View.VISIBLE
+                }else{
+                    binding.flProgress.visibility = View.GONE
+                }
             }
 
             viewModel.siginLiveData.observe(this@SiginActivity) {
@@ -66,7 +73,6 @@ class SiginActivity : AppCompatActivity() {
     }
 
     fun loadData() {
-        binding.flProgress.visibility = View.VISIBLE
         viewModel.getSigin(
             LoginRequest(
                 binding.edPassword.text.toString(),

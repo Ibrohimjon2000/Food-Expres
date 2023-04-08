@@ -41,11 +41,18 @@ class CheckoutActivity : AppCompatActivity() {
 
         viewModel.errorLiveData.observe(    this) {
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-            binding.flProgress.visibility = View.GONE
         }
 
         viewModel.successOrderLiveData.observe(this) {
-            binding.flProgress.visibility = View.GONE
+
+        }
+
+        viewModel.progressLiveData.observe(this){
+            if (it){
+                binding.flProgress.visibility = View.VISIBLE
+            }else{
+                binding.flProgress.visibility = View.GONE
+            }
         }
 
         binding.tvTotalAmount.text = intent.getStringExtra(Constants.EXTRA_DATA) + " UZS"
@@ -125,7 +132,6 @@ class CheckoutActivity : AppCompatActivity() {
             }
 
             btnMakeOrder.setOnClickListener {
-                binding.flProgress.visibility = View.VISIBLE
                 Toast.makeText(this@CheckoutActivity, "Order saved!", Toast.LENGTH_SHORT).show()
                 PrefUtils.setCartList(emptyList())
                 val i = Intent(this@CheckoutActivity, MainActivity::class.java)

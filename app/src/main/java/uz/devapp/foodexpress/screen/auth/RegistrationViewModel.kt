@@ -19,10 +19,14 @@ class RegistrationViewModel : ViewModel() {
     private var _errorLiveData = MutableLiveData<String>()
     var errorLiveData: LiveData<String> = _errorLiveData
 
+    private var _progressLiveData = MutableLiveData<Boolean>()
+    var progressLiveData: LiveData<Boolean> = _progressLiveData
+
     private var _registrationLiveData = MutableLiveData<RegistrationResponse?>()
     var registrationLiveData: LiveData<RegistrationResponse?> = _registrationLiveData
 
     fun getRegistration(request: RegistrationRequest) {
+        _progressLiveData.value = true
         viewModelScope.launch {
             val result = repository.getRegistration(request)
             when (result) {
@@ -33,6 +37,7 @@ class RegistrationViewModel : ViewModel() {
                     _registrationLiveData.value = (result.result)
                 }
             }
+            _progressLiveData.value = false
         }
     }
 }

@@ -25,7 +25,14 @@ class ProfileFragment : Fragment() {
 
             viewModel.errorLiveData.observe(requireActivity()) {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                binding.flProgress.visibility = View.GONE
+            }
+
+            viewModel.progressLiveData.observe(requireActivity()){
+                if (it){
+                    binding.flProgress.visibility = View.VISIBLE
+                }else{
+                    binding.flProgress.visibility = View.GONE
+                }
             }
 
             viewModel.profileLiveData.observe(requireActivity()) {
@@ -35,7 +42,6 @@ class ProfileFragment : Fragment() {
                 } else {
                     tvPhone.text = "+" + it?.phone
                 }
-                binding.flProgress.visibility = View.GONE
             }
             loadData()
         }
@@ -43,7 +49,6 @@ class ProfileFragment : Fragment() {
     }
 
     fun loadData() {
-        binding.flProgress.visibility = View.VISIBLE
         viewModel.getProfile()
     }
 

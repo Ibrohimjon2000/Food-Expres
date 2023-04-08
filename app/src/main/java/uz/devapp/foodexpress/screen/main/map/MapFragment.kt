@@ -41,7 +41,14 @@ class MapFragment : Fragment() {
 
         viewModel.errorLiveData.observe(requireActivity()) {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-            binding.flProgress.visibility = View.GONE
+        }
+
+        viewModel.progressLiveData.observe(requireActivity()){
+            if (it){
+                binding.flProgress.visibility = View.VISIBLE
+            }else{
+                binding.flProgress.visibility = View.GONE
+            }
         }
 
         viewModel.restaurantListLiveData.observe(requireActivity()) {
@@ -90,7 +97,6 @@ class MapFragment : Fragment() {
                         }
                 }
             })
-            binding.flProgress.visibility = View.GONE
         }
 
         loadData()
@@ -104,7 +110,6 @@ class MapFragment : Fragment() {
     }
 
     fun loadData() {
-        binding.flProgress.visibility = View.VISIBLE
         viewModel.getRestaurant()
     }
 }

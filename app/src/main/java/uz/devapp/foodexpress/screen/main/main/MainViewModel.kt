@@ -17,6 +17,9 @@ class MainViewModel : ViewModel() {
     private var _errorLiveData = MutableLiveData<String>()
     var errorLiveData: LiveData<String> = _errorLiveData
 
+    private var _progressLiveData = MutableLiveData<Boolean>()
+    var progressLiveData: LiveData<Boolean> = _progressLiveData
+
     private var _offerListLiveData = MutableLiveData<List<OfferModel>?>()
     var offerListLiveData: LiveData<List<OfferModel>?> = _offerListLiveData
 
@@ -33,6 +36,7 @@ class MainViewModel : ViewModel() {
 
 
     fun getOffers() {
+        _progressLiveData.value = true
         viewModelScope.launch {
             val result = repository.getOffers()
             when (result) {
@@ -43,6 +47,7 @@ class MainViewModel : ViewModel() {
                     _offerListLiveData.value = (result.result)
                 }
             }
+            _progressLiveData.value = false
         }
     }
 

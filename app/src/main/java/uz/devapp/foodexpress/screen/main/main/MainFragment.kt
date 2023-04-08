@@ -1,24 +1,12 @@
 package uz.devapp.foodexpress.screen.main.main
 
-import android.app.Activity
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
-import uz.devapp.foodexpress.R
 import uz.devapp.foodexpress.adapters.CategoryAdapter
 import uz.devapp.foodexpress.adapters.RestaurantAdapter
 import uz.devapp.foodexpress.adapters.SlideAdapter
@@ -42,38 +30,46 @@ class MainFragment : Fragment() {
         binding.apply {
             viewModel = ViewModelProvider(this@MainFragment)[MainViewModel::class.java]
 
-            menu.setOnClickListener{ v ->
+            menu.setOnClickListener { v ->
                 (activity as MainActivity).openCloseNavigationDrawer(v)
             }
 
             viewModel.errorLiveData.observe(requireActivity()) {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                binding.flProgress.visibility = View.GONE
+            }
+
+            viewModel.progressLiveData.observe(requireActivity()) {
+                swipe.isRefreshing = it
+                if (it) {
+                    binding.flProgress.visibility = View.VISIBLE
+                } else {
+                    binding.flProgress.visibility = View.GONE
+                }
+            }
+
+            swipe.setOnRefreshListener {
+                loadData()
             }
 
             viewModel.offerListLiveData.observe(requireActivity()) {
                 slideAdapter = SlideAdapter(it ?: emptyList())
                 rvSlide.adapter = slideAdapter
-                binding.flProgress.visibility = View.GONE
             }
 
 
             viewModel.categoryListLiveData.observe(requireActivity()) {
                 categoryAdapter = CategoryAdapter(it ?: emptyList())
                 rvCategories.adapter = categoryAdapter
-                binding.flProgress.visibility = View.GONE
             }
 
             viewModel.restaurantListLiveData.observe(requireActivity()) {
                 restaurantAdapter = RestaurantAdapter(it ?: emptyList())
                 rvNearbyRestaurants.adapter = restaurantAdapter
-                binding.flProgress.visibility = View.GONE
             }
 
             viewModel.restaurantTopListLiveData.observe(requireActivity()) {
                 topRestaurantAdapter = TopRestaurantAdapter(it ?: emptyList())
                 rvTopRestaurants.adapter = topRestaurantAdapter
-                binding.flProgress.visibility = View.GONE
             }
 
             loadData()
@@ -82,7 +78,6 @@ class MainFragment : Fragment() {
     }
 
     fun loadData() {
-        binding.flProgress.visibility = View.VISIBLE
         viewModel.getOffers()
         viewModel.getCategory()
         viewModel.getRestaurant()

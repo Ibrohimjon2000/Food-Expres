@@ -16,11 +16,15 @@ class MapViewModel : ViewModel() {
     private var _errorLiveData = MutableLiveData<String>()
     var errorLiveData: LiveData<String> = _errorLiveData
 
+    private var _progressLiveData = MutableLiveData<Boolean>()
+    var progressLiveData: LiveData<Boolean> = _progressLiveData
+
     private var _restaurantListLiveData = MutableLiveData<List<RestaurantModel>?>()
     var restaurantListLiveData: LiveData<List<RestaurantModel>?> = _restaurantListLiveData
 
 
     fun getRestaurant() {
+        _progressLiveData.value = true
         viewModelScope.launch {
             val result = repository.getTopRestaurants()
             when (result) {
@@ -31,6 +35,7 @@ class MapViewModel : ViewModel() {
                     _restaurantListLiveData.value = (result.result)
                 }
             }
+            _progressLiveData.value = false
         }
     }
 }

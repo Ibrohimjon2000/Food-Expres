@@ -34,7 +34,8 @@ class RestaurantDetailActivity : AppCompatActivity(), ItemClickListener {
         }
 
         binding.apply {
-            viewModel = ViewModelProvider(this@RestaurantDetailActivity)[RestaurantDetailViewModel::class.java]
+            viewModel =
+                ViewModelProvider(this@RestaurantDetailActivity)[RestaurantDetailViewModel::class.java]
 
             if (restaurantModel.distance > 0) {
                 distanceVisibility.visibility = View.VISIBLE
@@ -44,24 +45,32 @@ class RestaurantDetailActivity : AppCompatActivity(), ItemClickListener {
             }
             viewModel.errorLiveData.observe(this@RestaurantDetailActivity) {
                 Toast.makeText(this@RestaurantDetailActivity, it, Toast.LENGTH_SHORT).show()
-                binding.flProgress.visibility = View.GONE
+            }
+
+            viewModel.progressLiveData.observe(this@RestaurantDetailActivity) {
+                swipe.isRefreshing = it
+                if (it) {
+                    binding.flProgress.visibility = View.VISIBLE
+                } else {
+                    binding.flProgress.visibility = View.GONE
+                }
+            }
+
+            swipe.setOnRefreshListener {
+                loadData()
             }
 
             viewModel.successProductLiveData.observe(this@RestaurantDetailActivity) {
-                binding.flProgress.visibility = View.VISIBLE
                 it?.forEach {
                     it.cartCount = PrefUtils.getCartCount(it.id)
                 }
                 productAdapter = ProductAdapter(it ?: emptyList())
                 rvProduct.adapter = productAdapter
-                binding.flProgress.visibility = View.GONE
             }
 
             viewModel.successDetailRestaurantLiveData.observe(this@RestaurantDetailActivity) {
-                binding.flProgress.visibility = View.VISIBLE
                 if (it != null) {
                     restaurantModel = it
-
                     tvName.text = restaurantModel.name
                     tvAddress.text = restaurantModel.address
                     tvReting.text = restaurantModel.rating.toString()
@@ -69,10 +78,9 @@ class RestaurantDetailActivity : AppCompatActivity(), ItemClickListener {
                     reting.rating = restaurantModel.rating.toFloat()
                     tvContact.text = restaurantModel.phone
                 }
-                binding.flProgress.visibility = View.GONE
             }
 
-           loadData()
+            loadData()
 
             back.setOnClickListener {
                 finish()
@@ -91,8 +99,7 @@ class RestaurantDetailActivity : AppCompatActivity(), ItemClickListener {
         }
     }
 
-    fun loadData(){
-        binding.flProgress.visibility = View.VISIBLE
+    fun loadData() {
         viewModel.getProduct(restaurantModel.id)
         viewModel.getDetailRestaurant(restaurantModel.id)
     }

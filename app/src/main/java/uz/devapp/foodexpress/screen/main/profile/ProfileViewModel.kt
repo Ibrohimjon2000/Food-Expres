@@ -15,11 +15,15 @@ class ProfileViewModel : ViewModel() {
     private var _errorLiveData = MutableLiveData<String>()
     var errorLiveData: LiveData<String> = _errorLiveData
 
+    private var _progressLiveData = MutableLiveData<Boolean>()
+    var progressLiveData: LiveData<Boolean> = _progressLiveData
+
     private var _profileLiveData = MutableLiveData<ProfileModel?>()
     var profileLiveData: LiveData<ProfileModel?> = _profileLiveData
 
 
     fun getProfile() {
+        _progressLiveData.value = true
         viewModelScope.launch {
             val result = repository.getProfile()
             when (result) {
@@ -30,6 +34,7 @@ class ProfileViewModel : ViewModel() {
                     _profileLiveData.value = (result.result)
                 }
             }
+            _progressLiveData.value = false
         }
     }
 }

@@ -21,10 +21,14 @@ class SiginViewModel : ViewModel() {
     private var _errorLiveData = MutableLiveData<String>()
     var errorLiveData: LiveData<String> = _errorLiveData
 
+    private var _progressLiveData = MutableLiveData<Boolean>()
+    var progressLiveData: LiveData<Boolean> = _progressLiveData
+
     private var _siginLiveData = MutableLiveData<LoginResponse?>()
     var siginLiveData: LiveData<LoginResponse?> = _siginLiveData
 
     fun getSigin(request: LoginRequest) {
+        _progressLiveData.value = true
         viewModelScope.launch {
             val result = repository.getSigin(request)
             when (result) {
@@ -35,6 +39,7 @@ class SiginViewModel : ViewModel() {
                     _siginLiveData.value = (result.result)
                 }
             }
+            _progressLiveData.value = false
         }
     }
 }

@@ -40,7 +40,14 @@ class RegistrationActivity : AppCompatActivity() {
 
             viewModel.errorLiveData.observe(this@RegistrationActivity) {
                 Toast.makeText(this@RegistrationActivity, it, Toast.LENGTH_SHORT).show()
-                binding.flProgress.visibility = View.GONE
+            }
+
+            viewModel.progressLiveData.observe(this@RegistrationActivity){
+                if (it){
+                    binding.flProgress.visibility = View.VISIBLE
+                }else{
+                    binding.flProgress.visibility = View.GONE
+                }
             }
 
             viewModel.registrationLiveData.observe(this@RegistrationActivity) {
@@ -73,7 +80,6 @@ class RegistrationActivity : AppCompatActivity() {
     }
 
     fun loadData() {
-        binding.flProgress.visibility = View.VISIBLE
         viewModel.getRegistration(
             RegistrationRequest(
                 binding.edFullname.text.toString(),
